@@ -59,6 +59,7 @@ export default async function handler(req,res) {
   let input=req.body;
   if(typeof input==='string'){if(Buffer.byteLength(input)>MAX_BODY)return json(res,413,{error:'payload_too_large'});try{input=JSON.parse(input)}catch{return json(res,400,{error:'invalid_json'})}}
   if(!input || typeof input!=='object' || Array.isArray(input))return json(res,400,{error:'invalid_json'});
+  if(Buffer.byteLength(JSON.stringify(input))>MAX_BODY)return json(res,413,{error:'payload_too_large'});
   const name=clean(input.name,120),email=clean(input.email,254),company=clean(input.company,150),
     team=clean(input.team,60),plan=clean(input.plan,60),message=clean(input.message,3000),
     turnstile=clean(input.turnstile,2048),website=clean(input.website,250);
@@ -66,7 +67,7 @@ export default async function handler(req,res) {
     return json(res,400,{error:'invalid_fields'});
   }
   if(website) return json(res,200,{ok:true}); // honeypot; no send
-  if(!process.env.RESEND_API_KEY || !process.env.CONTACT_TO_EMAIL || !process.env.CONTACT_FROM_EMAIL || !process.env.CONTACT_SENDING_ENABLED){
+  if(!process.env.RESEND_API_KEY || !process.env.CONTACT_TO_EMAIL || !process.env.CONTACT_FROM_EMAIL || process.env.CONTACT_SENDING_ENABLED !== 'true'){
     return json(res,503,{error:'contact_unavailable'});
   }
   try {
