@@ -35,7 +35,7 @@
  function render(){if(banner)banner.hidden=consent!=='unset';}
  document.getElementById('analytics-accept')?.addEventListener('click',()=>store('accepted'));
  document.getElementById('analytics-reject')?.addEventListener('click',()=>{const wasActive=hasConsent();store('rejected');if(wasActive){clearGoogleCookies();location.reload();}});
- prefs?.addEventListener('click',()=>{if(loaded){clearGoogleCookies();}consent='unset';try{localStorage.removeItem(consentKey)}catch{};render();if(banner&&!banner.hidden)document.getElementById('analytics-reject')?.focus();});
+ prefs?.addEventListener('click',()=>{const wasActive=hasConsent();consent='unset';try{localStorage.removeItem(consentKey)}catch{};if(wasActive){clearGoogleCookies();location.reload();return;}render();if(banner&&!banner.hidden)document.getElementById('analytics-reject')?.focus();});
  if(consent==='accepted')loadTag();render();
  document.querySelectorAll('a[href*="/trial?plan=trial"]').forEach(a=>a.addEventListener('click',()=>track('trial_click',{location:a.closest('#inicio')?'hero':a.closest('#demonstracao')?'demo':a.closest('#planos')?'pricing':'final'})));
  document.querySelectorAll('a[href="#contato"]').forEach(a=>a.addEventListener('click',()=>track('contact_click',{location:a.closest('#planos')?'pricing':'nav'})));
