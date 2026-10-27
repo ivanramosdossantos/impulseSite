@@ -17,7 +17,7 @@
   window.dataLayer=window.dataLayer||[];window.dataLayer.push(data);
  }
  window.ImpulseAnalytics=Object.freeze({track});
- if(!configured)return; // Safe fail-closed: no ID, no banner, no analytics.
+ if(!configured){document.getElementById('analytics-preferences')?.setAttribute('hidden','');return;} // Safe fail-closed: no ID, no banner, no analytics.
  function loadTag(){if(loaded||!hasConsent())return;loaded=true;
   window.dataLayer=window.dataLayer||[];
   window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});
