@@ -1,7 +1,7 @@
 /* Impulse website analytics — consent-first, no third-party requests until approval. */
 (()=>{'use strict';
  const containerId=String(window.IMPULSE_GTM_ID||'').trim();
- const configured=/^GTM-[A-Z0-9]{4,}$/i.test(containerId);
+ const configured=/^GTM-[A-Z0-9]{4,}$/i.test(containerId)&&['useimpulse.com.br','www.useimpulse.com.br'].includes(location.hostname);
  const consentKey='impulse.analytics.consent.v1';
  const allowEvents=new Set(['trial_click','demo_view','generate_lead','pricing_view','contact_click']);
  let loaded=false;
