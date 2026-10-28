@@ -3,20 +3,21 @@
 ## Escopo desta implementação
 
 - Mantém o site estático (HTML/CSS/JS) e seus endpoints existentes, sem alterar plataforma, cadastro, pagamentos ou NDA.
-- A coleta de dados **não está ativa** até ser preenchido um ID real em `analytics-config.js`.
+- O container web `GTM-WB79J4DC` está configurado em `analytics-config.js` na branch de reformulação. **Isso ainda não publica o site nem garante coleta:** a tag `G-TZWBL4PJZF` precisa ser criada e publicada dentro do GTM, e o PR precisa ser homologado e publicado no domínio de produção.
 - O carregador `analytics.js` exige consentimento explícito; não carrega GTM antes do aceite. Recusar não faz solicitação a provedores de análise.
 - O carregador só roda em `useimpulse.com.br` e `www.useimpulse.com.br`; não envia dados de Preview, GitHub Pages alternativo ou localhost.
 
-## Ativação futura do GA4
+## IDs e ativação do GA4 (28/10/2026)
 
-1. Criar a propriedade GA4 e um **fluxo Web** para `https://useimpulse.com.br` em analytics.google.com.
-2. Criar um **container Web** no Google Tag Manager (GTM).
-3. Dentro do GTM, configurar a tag Google Analytics para o ID de medição real (G-...) e disparadores para os eventos descritos abaixo. Configurar consentimento e conferir pré-visualização do Tag Assistant.
-4. Substituir a string vazia de `window.IMPULSE_GTM_ID` no arquivo `analytics-config.js` pelo **ID do container GTM-...**. Não colocar IDs G-... nessa variável.
-5. Testar no domínio público: recusar, aceitar, voltar às preferências e revogar. Confirmar no modo de depuração do GA4 que só há eventos após aceite.
-6. Habilitar e validar o Search Console; conectar ao GA4 opcionalmente.
+1. Propriedade GA4 e fluxo Web já criados pelo responsável pelo produto. **ID de medição: `G-TZWBL4PJZF`**.
+2. Container Web do Google Tag Manager criado. **ID do container: `GTM-WB79J4DC`**, inserido em `analytics-config.js` na branch `feature/site-commercial-redesign`.
+3. **Pendente no painel do Tag Manager:** abra o container; Tags → Nova → tipo **Tag do Google** → ID da tag `G-TZWBL4PJZF` → acionador **Initialization – All Pages** → Salvar. Não instalar um segundo snippet `gtag.js` no HTML.
+4. **Pendente para os eventos de funil:** para cada evento da tabela abaixo, crie uma tag **Google Analytics: evento do GA4**, vinculada à propriedade `G-TZWBL4PJZF`, com acionador **Evento personalizado** cujo nome corresponde exatamente ao evento em `dataLayer`. Adicione apenas os parâmetros permitidos, nunca campos de formulário.
+5. **Pendente:** validar em Tag Assistant/Pré-visualizar e GA4 DebugView; confirmar recusa (zero solicitações ao Google), aceite (carregamento do GTM e eventos), revogação (sem novas medições). O container só é carregado com aceite prévio; é um modelo básico de consentimento. Não adicionar tags publicitárias sem nova revisão de privacidade.
+6. **Pendente:** enviar/publicar a versão do container GTM somente após testes e conformidade de consentimento. Fazer merge e publicação do site no domínio real só após homologação; o código impede envio de dados em Preview/outros domínios.
+7. Habilitar e validar Search Console, se desejado.
 
-**Não cadastrar IDs fictícios em produção.** GTM e GA4 gratuitos nas versões básicas; anúncios pagos e extensões comerciais não fazem parte deste trabalho.
+**Nunca instalar a tag duas vezes.** O GTM é carregado pelo script com consentimento e é nele que a tag GA4 precisa ser configurada. GTM e GA4 gratuitos nas versões básicas; anúncios pagos e extensões comerciais não fazem parte deste trabalho.
 
 ## Eventos implementados no SITE
 
@@ -56,8 +57,8 @@ Esses eventos não foram simulados no site. O backoffice e o banco continuam fon
 2. Navegação desktop/mobile, CTA do trial, planos e contato intactos.
 3. Demonstração troca as três perguntas e os exemplos sem nenhuma requisição externa.
 4. Linguagem de marketing consistente; respostas demonstrativas explicitamente fictícias.
-5. Sem GTM configurado: nenhum request ao Google e preferências ocultas.
-6. Com GTM real: sem consentimento não carregar; aceite carrega; recusa/revogação não carregam em novas visitas.
+5. Com ID GTM configurado no código: em Preview, localhost e domínios alternativos, nenhum request ao Google; no domínio público, **sem consentimento não carregar**.
+6. No domínio público, com GTM real publicado: aceite carrega; recusa/revogação não carregam em novas visitas. Confirmar a mesma regra para todos os eventos via DebugView.
 7. Formulário continua a exigir Turnstile e mantém tratamento de falha.
 8. Visual e contraste devem ser verificados no navegador antes de publicar na `main`.
 
